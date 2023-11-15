@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Button } from '../../../shared/components/FormElements';
-import { Card, Modal } from '../../../shared/components/UIElements/';
+import { Card, Map, Modal } from '../../../shared/components/UIElements/';
 import './PlaceItem.css';
 
 const PlaceItem = (props) => {
@@ -18,10 +18,14 @@ const PlaceItem = (props) => {
         header={props.address}
         contentClass='place-item__modal-content'
         footerClass='place-item__modal-actions'
-        footer={<Button onClick={closeMapHandler}>Close</Button>}
+        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
       >
         <div className='map-container'>
-          <h2>The Map</h2>
+          <Map
+            style={{ background: 'black' }}
+            center={props.coordinates}
+            zoom={16}
+          />
         </div>
       </Modal>
       <li className='place-item'>
