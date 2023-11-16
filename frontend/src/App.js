@@ -5,7 +5,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Users from './user/pages/Users';
-import NewPlace from './places/pages/NewPlace';
+import NewPlace from './places/pages/NewPlace/NewPlace';
 import UserPlaces from './places/pages/UserPlaces';
 import { MainNavigation } from './shared/components/Navigation';
 
