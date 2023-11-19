@@ -5,9 +5,8 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Users from './user/pages/Users';
-import NewPlace from './places/pages/NewPlace/NewPlace';
-import UserPlaces from './places/pages/UserPlaces';
 import { MainNavigation } from './shared/components/Navigation';
+import { UpdatePlace, UserPlaces, NewPlace } from './places/pages';
 
 const App = () => {
   return (
@@ -18,6 +17,7 @@ const App = () => {
           <Route path='/' element={<Users />} />
           <Route path='/places/new' element={<NewPlace />} />
           <Route path='/:userId/places' element={<UserPlaces />} />
+          <Route path='/places/:placeId' element={<UpdatePlace />} />
           <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
       </main>
