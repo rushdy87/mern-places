@@ -5,10 +5,19 @@ import { Card, Map, Modal } from '../../../shared/components/UIElements/';
 import './PlaceItem.css';
 
 const PlaceItem = (props) => {
-  const [showMap, setSetshowMap] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const openMapHandler = () => setSetshowMap(true);
-  const closeMapHandler = () => setSetshowMap(false);
+  const openMapHandler = () => setShowMap(true);
+  const closeMapHandler = () => setShowMap(false);
+
+  const showDeleteWorningHandler = () => setShowConfirmModal(true);
+  const cancelDeleteWorningHandler = () => setShowConfirmModal(false);
+
+  const confirmDeleteHandler = () => {
+    setShowConfirmModal(false);
+    console.log('Deleting..');
+  };
 
   return (
     <>
@@ -28,6 +37,27 @@ const PlaceItem = (props) => {
           />
         </div>
       </Modal>
+      <Modal
+        show={showConfirmModal}
+        onCancel={cancelDeleteWorningHandler}
+        header='Are you sure?'
+        footerClass='place-item__modal-actions'
+        footer={
+          <>
+            <Button inverse onClick={cancelDeleteWorningHandler}>
+              CANCEL
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              DELETE
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Do you want to proced and delete this place? Please note it can be
+          undone there after.
+        </p>
+      </Modal>
       <li className='place-item'>
         <Card className='place-item__content'>
           <div className='place-item__image'>
@@ -43,7 +73,9 @@ const PlaceItem = (props) => {
               VIEW ON MAP
             </Button>
             <Button to={`/places/${props.id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={showDeleteWorningHandler}>
+              DELETE
+            </Button>
           </div>
         </Card>
       </li>
