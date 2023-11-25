@@ -4,6 +4,8 @@ const PlacesRoutes = require('./routes/places-routes');
 
 const app = express();
 
+app.use(express.json());
+
 // Regiser routes
 app.use('/api/places', PlacesRoutes);
 
