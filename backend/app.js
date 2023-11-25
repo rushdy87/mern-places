@@ -1,5 +1,6 @@
 const express = require('express');
 
+const HttpError = require('./models/http-error');
 const PlacesRoutes = require('./routes/places-routes');
 
 const app = express();
@@ -8,6 +9,10 @@ app.use(express.json());
 
 // Regiser routes
 app.use('/api/places', PlacesRoutes);
+
+app.use((req, res, next) => {
+  return next(new HttpError('Could not find this route.', 404));
+});
 
 // Error handling medilware
 // This functon will execute when any middleware in front of it yield an erroe
