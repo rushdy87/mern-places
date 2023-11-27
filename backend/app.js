@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const HttpError = require('./models/http-error');
@@ -29,6 +30,13 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || 'An unknown error occurred!' });
 });
 
-const PORT = 3030;
-
-app.listen(PORT, () => console.log(`The server listennin to port ${PORT}...`));
+mongoose
+  .connect(process.env.DB_URI)
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`The server listennin to port ${process.env.PORT}...`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
