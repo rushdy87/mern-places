@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 
 const HttpError = require('./models/http-error');
 const PlacesRoutes = require('./routes/places-routes');
