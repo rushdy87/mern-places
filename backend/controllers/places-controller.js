@@ -31,16 +31,28 @@ const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
-    const places = await Place.find({ creator: userId });
-
-    if (!places || places.length === 0) {
+    const userWithPlaces = await User.findById(userId).populate('places');
+    if (!userWithPlaces || userWithPlaces.length === 0) {
       return next(
         new HttpError('Could not find a places for the provided user.', 404)
       );
     }
     res.json({
-      places: places.map((place) => place.toObject({ getters: true })),
+      places: userWithPlaces.places.map((place) =>
+        place.toObject({ getters: true })
+      ),
     });
+
+    // const places = await Place.find({ creator: userId });
+
+    // if (!places || places.length === 0) {
+    //   return next(
+    //     new HttpError('Could not find a places for the provided user.', 404)
+    //   );
+    // }
+    // res.json({
+    //   places: places.map((place) => place.toObject({ getters: true })),
+    // });
   } catch (error) {
     return next(
       new HttpError(
