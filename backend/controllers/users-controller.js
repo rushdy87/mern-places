@@ -42,7 +42,7 @@ const signup = async (req, res, next) => {
       email,
       password,
       image: 'https://cdn-icons-png.flaticon.com/512/666/666201.png',
-      places: 'p1',
+      places: [],
     });
 
     await user.save();
