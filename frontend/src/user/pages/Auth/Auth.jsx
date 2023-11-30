@@ -61,10 +61,37 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+
+    setIsLoading(true);
+
     if (isLoginMode) {
+      try {
+        const response = await fetch('http://localhost:3030/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          //not 'ok' mean 400s and 500s estatus code
+          throw new Error(responseData.message);
+        }
+
+        setIsLoading(false);
+        login();
+      } catch (err) {
+        setError(err.message || 'Something wont wrong, please try again.');
+        setIsLoading(false);
+      }
     } else {
       try {
-        setIsLoading(true);
         const response = await fetch('http://localhost:3030/api/users/signup', {
           method: 'POST',
           headers: {
