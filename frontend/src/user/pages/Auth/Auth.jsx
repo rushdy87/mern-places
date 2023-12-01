@@ -11,14 +11,15 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from '../../../shared/util/validators';
-import { useForm } from '../../../shared/hooks/form-hook';
+import { useForm, useHttpClient } from '../../../shared/hooks';
 import { AuthContext } from '../../../shared/context/auth-context';
 import './Auth.css';
 
 const Auth = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const { login } = useContext(AuthContext);
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -62,71 +63,49 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    setIsLoading(true);
-
     if (isLoginMode) {
       try {
-        const response = await fetch('http://localhost:3030/api/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        await sendRequest(
+          'http://localhost:3030/api/users/login',
+          'POST',
+          JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
+          {
+            'Content-Type': 'application/json',
+          }
+        );
 
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          //not 'ok' mean 400s and 500s estatus code
-          throw new Error(responseData.message);
-        }
-
-        setIsLoading(false);
         login();
       } catch (err) {
-        setError(err.message || 'Something wont wrong, please try again.');
-        setIsLoading(false);
+        console.log(err);
       }
     } else {
       try {
-        const response = await fetch('http://localhost:3030/api/users/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        await sendRequest(
+          'http://localhost:3030/api/users/signup',
+          'POST',
+          JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
+          {
+            'Content-Type': 'application/json',
+          }
+        );
 
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          //not 'ok' mean 400s and 500s estatus code
-          throw new Error(responseData.message);
-        }
-
-        setIsLoading(false);
         login();
       } catch (err) {
-        setError(err.message || 'Something wont wrong, please try again.');
-        setIsLoading(false);
+        console.log(err);
       }
     }
   };
 
-  const errorHandler = () => {
-    setError(null);
-  };
-
   return (
     <>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className='authentication'>
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>Login Required</h2>
