@@ -1,39 +1,42 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PlaceList from '../../components/PlaceList/PlaceList';
-
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584,
-    },
-    creator: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584,
-    },
-    creator: 'u2',
-  },
-];
+import { useHttpClient } from '../../../shared/hooks';
+import {
+  ErrorModal,
+  LoadingSpinner,
+} from '../../../shared/components/UIElements';
 
 const UserPlaces = () => {
+  const [loadedPlaces, setLoadedPlaces] = useState([]);
   const { userId } = useParams();
-  const loadedPlaces = DUMMY_PLACES.filter((place) => place.creator === userId);
-  return <PlaceList items={loadedPlaces} />;
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const { places } = await sendRequest(
+          `http://localhost:3030/api/places/user/${userId}`
+        );
+
+        setLoadedPlaces(places.filter((place) => place.creator === userId));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPlaces();
+  }, [sendRequest, userId]);
+
+  return (
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading ? (
+        <LoadingSpinner asOverlay />
+      ) : (
+        <PlaceList items={loadedPlaces} />
+      )}
+    </>
+  );
 };
 
 export default UserPlaces;
