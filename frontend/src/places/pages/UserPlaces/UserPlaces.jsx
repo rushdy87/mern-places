@@ -27,13 +27,19 @@ const UserPlaces = () => {
     fetchPlaces();
   }, [sendRequest, userId]);
 
+  const placeDeletedHandler = (deletedPlaceId) => {
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
+  };
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
       {isLoading ? (
         <LoadingSpinner asOverlay />
       ) : (
-        <PlaceList items={loadedPlaces} />
+        <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
       )}
     </>
   );
