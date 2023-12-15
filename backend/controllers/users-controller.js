@@ -1,4 +1,6 @@
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
@@ -36,10 +38,12 @@ const signup = async (req, res, next) => {
       );
     }
 
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const user = new User({
       name,
       email,
-      password,
+      password: hashedPassword,
       image: req.file.path,
       places: [],
     });
@@ -63,7 +67,21 @@ const login = async (req, res, next) => {
   try {
     const identifiedUser = await User.findOne({ email });
 
-    if (!identifiedUser || identifiedUser.password !== password) {
+    if (!identifiedUser) {
+      return next(
+        new HttpError(
+          'Could not identify user, credentials seem to be wrong.',
+          401
+        )
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      password,
+      identifiedUser.password
+    );
+
+    if (!isValidPassword) {
       return next(
         new HttpError(
           'Could not identify user, credentials seem to be wrong.',
