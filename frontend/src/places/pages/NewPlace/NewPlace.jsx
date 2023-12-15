@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button } from '../../../shared/components/FormElements';
+import ImageUpload from '../../../shared/components/ImageUpload/ImageUpload';
 import {
   LoadingSpinner,
   ErrorModal,
@@ -30,6 +31,10 @@ const NewPlace = () => {
         value: '',
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -40,19 +45,15 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        'http://localhost:3030/api/places',
-        'POST',
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: userId,
-        }),
-        {
-          'Content-Type': 'application/json',
-        }
-      );
+      const formData = new FormData();
+
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creator', userId);
+      formData.append('image', formState.inputs.image.value);
+
+      await sendRequest('http://localhost:3030/api/places', 'POST', formData);
       navigate('/');
     } catch (err) {
       console.log(err);
@@ -88,6 +89,11 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText='Please enter a valid address.'
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id='image'
+          onInput={inputHandler}
+          errorText='Please provied an image.'
         />
         <Button type='submit' disabled={!formState.isValid}>
           ADD PLACE
