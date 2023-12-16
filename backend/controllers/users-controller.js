@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
@@ -50,7 +51,13 @@ const signup = async (req, res, next) => {
 
     await user.save();
 
-    res.status(201).json({ user: user.toObject({ getters: true }) });
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_PRIVATE_KEY,
+      { expiresIn: 60 * 15 }
+    );
+
+    res.status(201).json({ userId: user.id, email: user.email, token });
   } catch (error) {
     return next(
       new HttpError(
@@ -90,9 +97,16 @@ const login = async (req, res, next) => {
       );
     }
 
+    const token = jwt.sign(
+      { userId: identifiedUser.id, email: identifiedUser.email },
+      process.env.JWT_PRIVATE_KEY,
+      { expiresIn: 60 * 15 }
+    );
+
     res.status(200).json({
-      message: 'Loged in',
-      user: identifiedUser.toObject({ getters: true }),
+      userId: identifiedUser.id,
+      email: identifiedUser.email,
+      token,
     });
   } catch (error) {
     return next(
