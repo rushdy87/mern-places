@@ -40,7 +40,7 @@ const NewPlace = () => {
   );
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
@@ -53,7 +53,9 @@ const NewPlace = () => {
       formData.append('creator', userId);
       formData.append('image', formState.inputs.image.value);
 
-      await sendRequest('http://localhost:3030/api/places', 'POST', formData);
+      await sendRequest('http://localhost:3030/api/places', 'POST', formData, {
+        Authorization: `Bearer ${token}`,
+      });
       navigate('/');
     } catch (err) {
       console.log(err);

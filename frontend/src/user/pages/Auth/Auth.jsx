@@ -71,7 +71,7 @@ const Auth = () => {
 
     if (isLoginMode) {
       try {
-        const { user } = await sendRequest(
+        const { userId, token } = await sendRequest(
           'http://localhost:3030/api/users/login',
           'POST',
           JSON.stringify({
@@ -83,7 +83,7 @@ const Auth = () => {
           }
         );
 
-        login(user.id);
+        login(userId, token);
       } catch (err) {
         console.log(err);
       }
@@ -95,13 +95,13 @@ const Auth = () => {
         formData.append('password', formState.inputs.password.value);
         formData.append('image', formState.inputs.image.value);
 
-        const { user } = await sendRequest(
+        const { userId, token } = await sendRequest(
           'http://localhost:3030/api/users/signup',
           'POST',
           formData
         );
 
-        login(user.id);
+        login(userId, token);
       } catch (err) {
         console.log(err);
       }
