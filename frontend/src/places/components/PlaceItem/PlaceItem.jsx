@@ -16,7 +16,7 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
@@ -31,7 +31,9 @@ const PlaceItem = (props) => {
     try {
       await sendRequest(
         `http://localhost:3030/api/places/${props.id}`,
-        'DELETE'
+        'DELETE',
+        null,
+        { Authorization: `Bearer ${token}` }
       );
       props.onDelete(props.id);
     } catch (error) {
