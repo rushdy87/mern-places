@@ -40,7 +40,7 @@ const NewPlace = () => {
   );
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
-  const { userId, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
